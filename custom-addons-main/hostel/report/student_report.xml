@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_student">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Student Report</h2>
+                    <t t-set="i" t-value="1"/>
+
+                    <t t-if="not docs and data[0]['id'] == data[-1]['id']">
+                        <t t-set="single_student" t-value="True"/>
+                        <h5>Student Name:
+                            <span t-esc="data[0]['name']"/>
+                        </h5>
+                    </t>
+                    <t t-if="not docs and data[0]['room_number'] == data[-1]['room_number']">
+                        <t t-set="single_room" t-value="True"/>
+                        <h5>Room No:
+                            <span t-esc="data[0]['room_number']"/>
+                        </h5>
+                    </t>
+
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>SL No</th>
+                                <t t-if="not single_student">
+                                    <th>Name</th>
+                                </t>
+                                <th>Monthly Rent</th>
+                                <th>Pending Amount</th>
+                                <t t-if="not single_room">
+                                    <th>Room</th>
+                                </t>
+                                <th>Invoice Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-if="not docs">
+                                <t t-set="current_room" t-value="''"/>
+                                <t t-foreach="data" t-as="student">
+                                    <t t-if="room_grouping and current_room != student['room_number']">
+                                        <tr>
+                                            <td colspan="6">
+                                                <b>Room No:
+                                                    <t t-if="student['room_number']">
+                                                        <span t-esc="student['room_number'] "/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-esc="'None'"/>
+                                                    </t>
+                                                </b>
+                                            </td>
+                                        </tr>
+                                        <t t-set="current_room"
+                                           t-value="student['room_number']"/>
+                                    </t>
+                                    <tr>
+                                        <td>
+                                            <span t-esc="i"/>
+                                        </td>
+                                        <t t-if="not single_student">
+                                            <td>
+                                                <span t-esc="student['name']"/>
+                                            </td>
+                                        </t>
+                                        <td>
+                                            <span t-esc="student['total_rent']"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="student['pending_amount']"/>
+                                        </td>
+                                        <t t-if="not single_room">
+                                            <td>
+                                                <span t-esc="student['room_number']"/>
+                                            </td>
+                                        </t>
+                                        <td>
+                                            <span t-esc="invoice_status_keys[student['invoice_status']]"/>
+                                        </td>
+                                        <t t-set="i" t-value="i+1"/>
+                                    </tr>
+                                </t>
+                            </t>
+
+                            <t t-else="">
+                                <t t-foreach="docs" t-as="student">
+
+                                    <tr>
+                                        <td>
+                                            <span t-esc="i"/>
+                                        </td>
+                                        <t t-if="not single_student">
+                                            <td>
+                                                <span t-field="student.name"/>
+                                            </td>
+                                        </t>
+                                        <td>
+                                            <span t-field="student.monthly_amount"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="student.pending_amount"/>
+                                        </td>
+                                        <t t-if="not single_room">
+                                            <td>
+                                                <span t-field="student.room_id"/>
+                                            </td>
+                                        </t>
+                                        <td>
+                                            <span t-field="student.invoice_status"/>
+                                        </td>
+                                        <t t-set="i" t-value="i+1"/>
+                                    </tr>
+                                </t>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

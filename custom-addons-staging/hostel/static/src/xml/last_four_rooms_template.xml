@@ -1,0 +1,69 @@
+<templates id="best_seller_template" xml:space="preserve">
+    <t t-name="hostel.last_four_rooms">
+        <div id="last_four_rooms" class="container">
+            <div id="carouselExampleControls" class="carousel slide"
+                 name="carousel" data-bs-ride="carousel"
+                 t-att-data-bs-interval="interval">
+                <div class="carousel-inner" role="listbox">
+                    <t t-if="chunks">
+                    <t t-foreach="chunks" t-as="chunk" t-key="x">
+                        <div class="carousel-item-active">
+                            <div t-att-class="chunk.is_active ? 'carousel-item active' : 'carousel-item'">
+                                <div class="row">
+                                    <t t-foreach="chunk" t-as="room" t-key="y">
+                                        <div class="col">
+                                            <div class="card "
+                                                 style="width: 18rem;">
+                                                <div class="card-body">
+<!--                                                    <div class="col-6">-->
+                                                    <div class="overflow-hidden rounded">
+                                                        <t t-if="room.image">
+                                                            <img class="card-img-top o_img_product_square o_img_product_cover h-auto"
+                                                                 t-attf-src="data:image/jpeg;base64,{{room.image}}"/></t>
+                                                        <t t-else="">
+                                                             <img class="card-img-top o_img_product_square o_img_product_cover h-auto"
+                                                                  src="/hostel/static/src/img/no_image_icon.png"/>
+                                                        </t>
+                                                        </div>
+                                                    <!--                                                    </div>-->
+                                                    <h5 class="card-title"><t t-esc="room.room_number"/></h5>
+                                                    <p class="card-text">Space left: <t
+                                                            t-esc="room.bed_count-room.person_count"/></p>
+                                                    <a t-attf-href="/store/#{room.id}"
+                                                       class="btn btn-primary">Click Here</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    </t>
+                    <t t-else="">
+                        <span>No Rooms</span>
+                    </t>
+                </div>
+                <div class="o_carousel_controllers">
+                     <a t-attf-href="#carouselExampleControls"
+                        class="carousel-control-prev position-md-absolute w-auto"
+                        data-bs-slide="prev" role="button" aria-label="Previous"
+                        title="Previous">
+                                <span class="oi oi-chevron-left ms-md-n4 rounded-pill p-3 bg-700"/>
+                         <span class="visually-hidden">Previous</span>
+                     </a>
+                    <a t-attf-href="#carouselExampleControls"
+                       class="carousel-control-next position-md-absolute w-auto"
+                       data-bs-slide="next" role="button" aria-label="Next"
+                       title="Next">
+                        <span class="oi oi-chevron-right me-md-n4 rounded-pill p-3 bg-700"/>
+                        <span class="visually-hidden">Next</span>
+                    </a>
+
+
+                </div>
+
+            </div>
+        </div>
+    </t>
+</templates>

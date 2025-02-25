@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-test-service
+spec:
+  selector:
+    app: my-test-pod  # Matches the label from the Pod
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80        # Service port inside the cluster
+      targetPort: 80  # The container's port (Nginx listens on 80)
+      nodePort: 30095  # Change this to a valid port (e.g., 30095)

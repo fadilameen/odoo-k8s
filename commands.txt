@@ -1,0 +1,77 @@
+sudo docker-compose build
+sudo docker-compose up
+sudo docker-compose down
+
+sudo docker ps -a
+
+sudo docker system prune -a --volumes       :to clear all unused images
+
+
+to enter inside db container:  sudo docker exec -it {container_name} psql -U odoo18-main postgres
+                              then \l to list all db inside that containers
+                              then \c {dbname} to change location into that db
+
+to backup db:             
+    sudo docker exec -t {container_name} pg_dumpall -c -U {db_user} > {file_name}
+        eg,                 
+            sudo docker exec -t odoo-docker-setup_db-main_1 pg_dumpall -c -U odoo18-main > dump_`date +%Y-%m-%d"_"%H_%M_%S`.sql
+
+to restore db:             
+    sudo cat {file_name} |sudo  docker exec -i {container_name} psql -U {db_user} -d {dd_name customly creating db name in odoo}
+        eg,                 
+            sudo cat dump_2025-02-18_11_17_16.sql |sudo  docker exec -i odoo-docker-setup_db-staging_1 psql -U odoo18-staging -d dbyy
+
+        (IF THERE IS ANY ROLE MISMATCH DATABASE WILL CREATE SUCCESSFULY BUT CANT SEE IT IN ODOO BUT CAN BE SEEN IN TERMINAL THROUGH ACCESSING
+        CAN BE FIXED BY RUNNING ALTER ROLE COMMAND   
+        eg: postgres=# ALTER DATABASE dbx OWNER TO "odoo18-staging";)
+
+to create databse role and to give acces:
+        db1=# CREATE ROLE "odoo18-staging" WITH LOGIN SUPERUSER CREATEDB CREATEROLE PASSWORD 'odoo18-staging';
+        CREATE ROLE
+        db1=# ALTER DATABASE db1 OWNER TO "odoo18-staging";
+        ALTER DATABASE
+
+
+
+to backup filestore:  
+    1. sudo docker exec -it --user root $CONTAINER_NAME bash           
+        eg,                 
+            sudo docker exec -it --user root odoo-docker-setup_odoo_main_1 bash
+    2.(Then inside container bash)
+       tar -cvzf /$FILE_NAME.tar.gz -C /var/lib odoo           
+        eg,                 
+            root@56e7b639e82a:/# tar -cvzf /odoo_backup.tar.gz -C /var/lib odoo
+    3.(Then exit bash and on docker directory copy backedup file to external drive)
+       sudo docker cp $CONTAINER_NAME:$FILENAME.tar.gz $EXTERNAL_DIRECTORY           
+        eg,                 
+            sudo docker cp odoo-docker-setup_odoo_main_1:odoo_backup.tar.gz /home/cybrosys/odoo-docker-setup
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+COMMAND FOR CREATING CRON, ADD THIS INSIDE #sudo crontab -e
+        * * * * * /home/cybrosys/odoo-docker-setup/backup-odoo.sh >> /home/cybrosys/odoo-docker-setup/backup/backup_$(date '+\%Y-\%m-\%d_\%H-\%M-\%S').log 2>&1
+
+#DB backup
+docker run --rm -v "$VOLUME_NAME:$WHERE_TO_MOUNT_VOLUME_INSIDE_CONTAINER" -v "$EXTERNAL_LOCATION_OF_BACKUP_FOLDER:$WHERE_TO_MOUNT_BACKUP_FILE_INSIDE_CONTAINER" busybox sh -c "tar czf $WHERE_TO_MOUNT_BACKUP_FILE_INSIDE_CONTAINER/$DB_BACKUP_NAME $WHERE_TO_MOUNT_VOLUME_INSIDE_CONTAINER"
+docker run --rm -v "odoo-docker-setup_db-main:/data" -v "/home/cybrosys/odoo-docker-setup/backup:/backup" busybox sh -c "tar czf /backup/odoo_db_backup_2025-02-21_08-49-37.tar.gz /data"
+
+#DB restore
+docker run --rm -v "odoo-docker-setup_db-staging:/data" -v "/home/cybrosys/odoo-docker-setup/backup:/backup" busybox sh -c "tar xzf /backup/odoo_db_backup_2025-02-21_08-49-37.tar.gz -C /"
+
+#Filestore backup
+docker run --rm -v "odoo-docker-setup_data-main:/data" -v "/home/cybrosys/odoo-docker-setup/backup:/backup" busybox sh -c "tar czf /backup/odoo_filestore_backup_2025-02-21_08-49-40.tar.gz /data"
+
+#Filestore restore
+docker run --rm -v "odoo-docker-setup_data-staging:/data" -v "/home/cybrosys/odoo-docker-setup/backup:/backup" busybox sh -c "tar xzf /backup/odoo_filestore_backup_2025-02-21_08-49-40.tar.gz -C /"
+
+
+
+
+                               
+              
+
+
+
+
+
+            
