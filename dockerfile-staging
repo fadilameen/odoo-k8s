@@ -1,3 +1,0 @@
-FROM odoo:18
-COPY ./custom-addons-staging ./mnt/extra-addons
-CMD ["odoo", "-c", "/etc/odoo/odoo.conf"]

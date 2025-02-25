@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <record id="website_student_menu" model="website.menu">
-        <field name="name">Hostel</field>
-        <field name="url">/hostel</field>
-        <field name="parent_id" ref="website.main_menu"/>
-        <field name="sequence">55</field>
-    </record>
-</odoo>
