@@ -1,0 +1,47 @@
+  export ODOO_EMAIL=user@example.com
+  export ODOO_PASSWORD=$(kubectl get secret --namespace "default" my-odoo -o jsonpath="{.data.odoo-password}" | base64 -d)
+microk8s helm install odoo bitnami/odoo -n default --set odooPassword=admin #to set password as admin defualt when installing odoo
+microk8s.kubectl get secret my-odoo-postgresql -n default -o jsonpath="{.data.password}" | base64 --decode      #postgres password
+Now, to access PostgreSQL inside the pod:
+
+1️⃣ Enter the PostgreSQL Pod
+microk8s.kubectl exec -it my-odoo-postgresql-0 -n default -- /bin/bash
+
+2️⃣ Connect to PostgreSQL
+Once inside the pod, run:
+
+psql -U bn_odoo -d bitnami_odoo
+It will prompt for a password. You can retrieve it using:
+
+microk8s.kubectl get secret my-odoo-postgresql -n default -o jsonpath="{.data.password}" | base64 --decode
+Copy this password and enter it when prompted.
+
+microk8s helm status odoo   to get basic details and usrname and pass
+microk8s.helm list -A                  # List all Helm releases  
+microk8s.helm get values my-odoo -n default  # View Helm values  
+microk8s.helm get manifest my-odoo -n default  # View full Helm manifest  
+microk8s.helm get notes my-odoo -n default  # Check installation notes  
+
+microk8s kubectl port-forward svc/my-odoo 8080:80   -to which port(8080) sourceport(80)
+microk8s.status              # Check MicroK8s status  
+microk8s.kubectl get nodes   # List cluster nodes  
+microk8s.kubectl get pods -A # List all pods in all namespaces  
+microk8s.kubectl get svc -A  # List all services in all namespaces  
+microk8s.kubectl get all -A  # Show all resources in all namespaces  
+microk8s.kubectl get namespaces          # List all namespaces  
+microk8s.kubectl get pods -n default     # List all pods in default namespace  
+microk8s.kubectl get secrets -n default  # List all secrets  
+
+microk8s.kubectl describe pod <pod-name> -n default  # Detailed info about a pod  
+microk8s.kubectl logs <pod-name> -n default          # View logs of a pod  
+microk8s.kubectl exec -it <pod-name> -n default -- /bin/bash  # Access pod shell  
+
+to read conf file inside pod container
+    microk8s.kubectl exec -it  my-odoo-7d4d74c7f9-h4dhw -n default -- /bin/bash 
+    then
+        cat /opt/bitnami/odoo/conf/odoo.conf
+
+
+microk8s.kubectl edit deployment my-odoo    #to edit deployment
+
+

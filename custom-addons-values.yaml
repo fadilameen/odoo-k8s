@@ -1,0 +1,12 @@
+extraVolumes:
+  - name: custom-addons
+    hostPath:
+      path: /home/cybrosys/odoo-k8s/odoo-custom-addons
+extraVolumeMounts:
+  - name: custom-addons
+    mountPath: /custom-addons
+odoo:
+  command:
+    - /bin/bash
+    - -c
+    - "odoo --config=/opt/bitnami/odoo/conf/odoo.conf --addons-path=/opt/bitnami/odoo/odoo/addons,/custom-addons"
